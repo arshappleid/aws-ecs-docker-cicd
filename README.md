@@ -3,6 +3,17 @@ This pipeline automates building of source code, Unit Testing, Deployment of Cod
 
 ## Explanation of Each Step
 
+![CI/CD Pipeline](assets/images/cicd-pipeline.png)
+
+## Configuration
+Configure the Environment Variables in the pipeline. 
+
+Configure the Following Secrets in Github Repo > Settings > Secrets 
+```
+COGNITO_CLIENT_ID=
+COGNITO_REFRESH_TOKEN=
+```
+
 ### Build 
 Build The source Code, errors detected here will be compilation errors. 
 
@@ -14,5 +25,7 @@ Deploy new code changes to production environment, using blue green deployment w
 
 ### API Testing
 Perform End to End Testing (to verify user experience), experienced on your application. 
+
+This example makes use of Bruno API testing (open source), to perform API requests on an API endpoint. This example allows to perform API testing for endpoint which expect Cognito issued JWT tokens.  
 
 
