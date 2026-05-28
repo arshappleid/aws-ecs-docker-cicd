@@ -20,6 +20,12 @@ Build The source Code, errors detected here will be compilation errors.
 ### Unit Testing
 Run unit test using python's pytest library to test routers, service functions with aws infrastructure, using python's [moto](https://docs.getmoto.org/en/latest/docs/getting_started.html#decorator) library. 
 
+### Container Security Scanning
+Scan the container, for security vulnerability. 
+
+### Manual Approval
+Administrative Control to approve the new deployment.
+
 ### Deployment
 Deploy new code changes to production environment, using blue green deployment with aws.
 
