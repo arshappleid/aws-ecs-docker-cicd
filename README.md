@@ -14,6 +14,12 @@ COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
 ```
 
+### Turn on Secret Scanning
+1. On GitHub.com, navigate to the main page of your repository.
+2. Under your repository name, click Settings.
+3. In the left sidebar, click Code security and analysis.
+4. Scroll down to Secret scanning and click Enable.
+
 ### Build 
 Build The source Code, errors detected here will be compilation errors. 
 
