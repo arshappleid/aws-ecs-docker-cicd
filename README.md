@@ -26,6 +26,8 @@ Scan the container, for security vulnerability.
 ### Manual Approval
 Administrative Control to approve the new deployment.
 
+Github provides controls to require approval for jobs within their pipelines through the use of environments. For this specific example we use the **production** environment to control who can push or approve of new changes. 
+
 ### Deployment
 Deploy new code changes to production environment, using blue green deployment with aws.
 
