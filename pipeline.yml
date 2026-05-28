@@ -91,7 +91,18 @@ jobs:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   IMAGE_TAG: ${{ github.event.workflow_run.head_sha || github.sha }}
               run: docker pull $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
-
+              
+            - name: Run Trivy Vulnerability Scanner
+              uses: aquasecurity/trivy-action@master
+              with:
+                  image-ref: 'my-app:latest'
+                  format: 'table'
+                  # Exit code '1' means fail the GitHub Actions run if issues are found
+                  exit-code: '1'
+                  ignore-unfixed: true
+                  vuln-type: 'os,library'
+                  severity: 'CRITICAL,HIGH'
+            
             - name: Start container
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -108,7 +119,21 @@ jobs:
             - name: Stop container
               if: always()
               run: docker rm -f backend-test
-
+    static-scan:
+        name: Static Application Security Testing (SAST)
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v4
+    
+          # Using Semgrep for fast, accurate static analysis
+          - name: Run Semgrep SAST
+            uses: semgrep/semgrep-action@v1
+            with:
+              config: p/security-audit
+              # Fail the build if vulnerabilities are found
+              auditOnFailure: false
+    
     deploy:
         name: Deploy Backend Service
         runs-on: ubuntu-24.04-arm
