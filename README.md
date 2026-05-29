@@ -14,6 +14,8 @@ COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
 ```
 ### Environment Description
+![Environment Setup](assets/images/Environment-Setup.png)
+
 dev > stage > prod
 
 dev - multiple developers pushing. 

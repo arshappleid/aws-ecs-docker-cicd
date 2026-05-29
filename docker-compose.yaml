@@ -1,13 +1,35 @@
 services:
-    tf-dev:
-        build:
-            context: .
-            dockerfile: Dockerfile
-            args:
-                TERRAFORM_VERSION: "1.13.3"
-                INSTALL_AZURE_CLI: "YES"
-                INSTALL_AWS_CLI: "YES"
-        container_name: terraform_env
-        volumes:
-            - ./iac/:/iac
-        working_dir: /iac/
+  tf-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TERRAFORM_VERSION: "1.13.3"
+        INSTALL_AZURE_CLI: "YES"
+        INSTALL_AWS_CLI: "YES"
+    container_name: terraform_env
+    volumes:
+      - ./iac/:/iac
+    working_dir: /iac/
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:80"   # host:container — backend uvicorn listens on container port 80
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    ports:
+      - "3000:80"
+    environment:
+      # Change this to any URL you want the React app to query.
+      # Uses the Docker service name "backend" and its container port 80.
+      - API_URL=http://backend:80/info
+    depends_on:
+      - backend

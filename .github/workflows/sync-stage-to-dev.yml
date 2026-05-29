@@ -1,0 +1,33 @@
+name: Sync dev into stage
+
+on:
+    schedule:
+        # Runs every day at 02:00 UTC
+        - cron: "0 2 * * *"
+    workflow_dispatch: # allow triggering manually from the Actions tab
+
+permissions:
+    contents: write
+
+jobs:
+    merge:
+        name: Merge dev -> stage
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout stage
+              uses: actions/checkout@v4
+              with:
+                  ref: stage
+                  # Full history needed for a real merge (not a shallow clone)
+                  fetch-depth: 0
+
+            - name: Configure git identity
+              run: |
+                  git config user.name  "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            - name: Merge dev into stage
+              run: |
+                  git fetch origin dev
+                  git merge --no-ff origin/dev -m "chore: automated daily merge of dev into stage [skip ci]"
+                  git push origin stage
