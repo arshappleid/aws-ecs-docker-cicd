@@ -6,6 +6,7 @@ on:
         paths:
             - "backend/**"
             - ".aws/ecs-flaskapi-taskDefinition.json"
+    workflow_dispatch:
 
 env:
     AWS_REGION: us-east-1
@@ -168,7 +169,7 @@ jobs:
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
-                  service: ${{ env.ECS_SERVICE }}
+                  service: ${{ env.ECS_SERVICE }}-${{ github.ref_name }}
                   cluster: ${{ env.ECS_CLUSTER }}
                   wait-for-service-stability: false
 
