@@ -16,4 +16,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . . 
 
 EXPOSE 80
-CMD ["gunicorn", "backend.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]

@@ -2,7 +2,7 @@ name: Deploy Backend Service
 
 on:
     push:
-        branches: ["dev"]
+        branches: ["stage", "prod", "dev"]
         paths:
             - "backend/**"
             - ".aws/ecs-flaskapi-taskDefinition.json"
@@ -127,11 +127,11 @@ jobs:
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
-                  
+
             - name: Login to Amazon ECR
               id: login-ecr
               uses: aws-actions/amazon-ecr-login@v1
-              
+
             - name: Fill in the new image ID in task definition
               id: task-def
               uses: aws-actions/amazon-ecs-render-task-definition@v1
