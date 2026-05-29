@@ -13,6 +13,12 @@ Configure the Following Secrets in Github Repo > Settings > Secrets
 COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
 ```
+### Environment Description
+dev > stage > prod
+
+dev - multiple developers pushing. 
+stage - successfull dev , with passing api tests. 
+prod - requires admin approval
 
 ### Turn on Secret Scanning
 1. On GitHub.com, navigate to the main page of your repository.
