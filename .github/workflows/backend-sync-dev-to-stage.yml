@@ -2,8 +2,7 @@ name: Sync dev into stage
 
 on:
     schedule:
-        # Runs every day at 02:00 UTC
-        - cron: "0 2 * * *"
+        - cron: "0 2 * * *" # Runs every day at 02:00 UTC
     workflow_dispatch: # allow triggering manually from the Actions tab
 
 permissions:
