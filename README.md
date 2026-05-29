@@ -14,11 +14,25 @@ COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
 ```
 
+### Turn on Secret Scanning
+1. On GitHub.com, navigate to the main page of your repository.
+2. Under your repository name, click Settings.
+3. In the left sidebar, click Code security and analysis.
+4. Scroll down to Secret scanning and click Enable.
+
 ### Build 
 Build The source Code, errors detected here will be compilation errors. 
 
 ### Unit Testing
 Run unit test using python's pytest library to test routers, service functions with aws infrastructure, using python's [moto](https://docs.getmoto.org/en/latest/docs/getting_started.html#decorator) library. 
+
+### Container Security Scanning
+Scan the container, for security vulnerability. 
+
+### Manual Approval
+Administrative Control to approve the new deployment.
+
+Github provides controls to require approval for jobs within their pipelines through the use of environments. For this specific example we use the **production** environment to control who can push or approve of new changes. 
 
 ### Deployment
 Deploy new code changes to production environment, using blue green deployment with aws.
