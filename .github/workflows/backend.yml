@@ -5,7 +5,7 @@ on:
         branches: ["stage", "prod", "dev"]
         paths:
             - "backend/**"
-            - ".aws/ecs-flaskapi-taskDefinition.json"
+            - ".aws/backend-ecs-taskDefinition.json"
     workflow_dispatch:
 
 env:

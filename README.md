@@ -13,6 +13,11 @@ Configure the Following Secrets in Github Repo > Settings > Secrets
 COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
 ```
+
+Other AWS infra creation
+1. ECR Repositories , use ```scripts/create_ecr_repo.sh```
+2. Github Actions IAM role to authenticate over OIDC, use ```scripts/create_github_actions_iam_role.sh```. 
+
 ### Environment Description
 ![Environment Setup](assets/images/Environment-Setup.png)
 
