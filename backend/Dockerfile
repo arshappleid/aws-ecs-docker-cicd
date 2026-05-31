@@ -1,5 +1,5 @@
 # Base image with shared models
-FROM --platform=linux/arm64 python:3.14-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
