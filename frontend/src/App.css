@@ -17,3 +17,5 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .card.error { background: #2a0f0f; border: 1px solid #dc2626; }
 .card.error h2 { color: #f87171; }
 pre { font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; }
+.env-tag { font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.75rem; }
+.env-tag strong { background: #1e293b; padding: 2px 8px; border-radius: 4px; color: #38bdf8; font-family: monospace; }

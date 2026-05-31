@@ -61,6 +61,9 @@ function App() {
         {data && !error && (
           <div className="card success">
             <h2>Response</h2>
+            {data.env && (
+              <p className="env-tag">Environment: <strong>{data.env}</strong></p>
+            )}
             <pre>{JSON.stringify(data, null, 2)}</pre>
           </div>
         )}

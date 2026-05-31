@@ -1,5 +1,12 @@
+**Author** : Prabhmeet Deol
+
 # Github Actions Pipeline to Automate Deployment and Testing
 This pipeline automates building of source code, Unit Testing, Deployment of Code to ECS Clusters, and API Testing with Bruno. 
+
+CICD Ideology, the repo acts as the source of Truth. Each branch should reflect the current environment. Each environment should protect a critical environment. 
+
+## AWS Environment Overview
+![AWS Architecture](assets/images/aws-architecture.png)
 
 ## Explanation of Each Step
 
@@ -8,15 +15,24 @@ This pipeline automates building of source code, Unit Testing, Deployment of Cod
 ## Configuration
 Configure the Environment Variables in the pipeline. 
 
-Configure the Following Secrets in Github Repo > Settings > Secrets 
+#### Configure the Following Secrets in Github Repo > Settings > Secrets.
 ```
 COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
 ```
 
-Other AWS infra creation
+#### Configure Pipeline Environment Variables
+```
+
+```
+
+#### AWS infra creation
+This infrastructure should not be managed by Terraform, since it will rarely require deletion. Or an accidental deletion of the following resources can be problematic. The following are also examples, 
+
+
 1. ECR Repositories , use ```scripts/create_ecr_repo.sh```
-2. Github Actions IAM role to authenticate over OIDC, use ```scripts/create_github_actions_iam_role.sh```. 
+2. Github Actions IAM role to authenticate over OIDC, use ```scripts/create_github_actions_iam_role.sh```.
+3. Create Cognito Pool - This allows to authenticate API requests, at the ALB. Use script ```scripts/create_cognito_pool.sh``` 
 
 ### Environment Description
 ![Environment Setup](assets/images/Environment-Setup.png)
@@ -55,4 +71,10 @@ Perform End to End Testing (to verify user experience), experienced on your appl
 
 This example makes use of Bruno API testing (open source), to perform API requests on an API endpoint. This example allows to perform API testing for endpoint which expect Cognito issued JWT tokens.  
 
+## Improvements
+
+[] Test Backend Pipeline
+[] Finish Front End Pipeline
+[] Add Artifact Caching to optimize performance of the pipeline.
+[] 
 
