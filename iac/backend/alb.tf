@@ -14,6 +14,7 @@ module "alb" {
       description = "HTTP web traffic"
       cidr_ipv4   = "0.0.0.0/0"
     }
+    /*
     all_https = {
       from_port   = 443
       to_port     = 443
@@ -21,6 +22,7 @@ module "alb" {
       description = "HTTPS web traffic"
       cidr_ipv4   = "0.0.0.0/0"
     }
+    */
   }
   security_group_egress_rules = {
     all = {
@@ -43,6 +45,7 @@ module "alb" {
         status_code = "HTTP_301"
       }
     }
+    /*
     ex-https = {
       port            = 443
       protocol        = "HTTPS"
@@ -52,6 +55,7 @@ module "alb" {
         target_group_key = "ex-instance"
       }
     }
+    */
   }
 
   target_groups = {
@@ -64,8 +68,8 @@ module "alb" {
     }
   }
 
-  tags = {
-    Environment = "Development"
+  tags = merge(tags, {
+
     Project     = "Example"
   }
 }
