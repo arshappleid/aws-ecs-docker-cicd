@@ -12,7 +12,6 @@ module "ecs" {
       }
     }
   }
-
   # Cluster capacity providers
   cluster_capacity_providers = ["FARGATE_SPOT"] ## Helps save on cost
   default_capacity_provider_strategy = {
