@@ -11,10 +11,12 @@ on:
 env:
     AWS_REGION: us-east-1
     ECR_REPOSITORY_NAME: company-backend-service1
-    ECS_SERVICE: service1
-    ECS_CLUSTER: company-backend-ecs-cluster
+    ECS_SERVICE: backend-service
+    PROD_ECS_CLUSTER: company-backend-prod-ecs-cluster
+    DEV_ECS_CLUSTER: company-backend-dev-ecs-cluster
+    STAGE_ECS_CLUSTER: company-backend-stage-ecs-cluster
     ECS_TASK_DEFINITION: .aws/ecs-flaskapi-taskDefinition.json
-    GITHUB_ACTION_IAM_ROLE: arn:aws:iam::156041414531:role/Github-actions-backend
+    GITHUB_ACTION_IAM_ROLE: arn:aws:iam::866934333672:role/GITHUB-ACTIONS-ALL-REPO
     CONTAINER_NAME: flask-api
     REPO_ROOT_FOLDER_NAME: backend
     UNIT_TEST_PATH: backend/tests/unit
