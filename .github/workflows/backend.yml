@@ -44,7 +44,7 @@ jobs:
               uses: docker/setup-buildx-action@v3
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v6
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
@@ -82,7 +82,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v1
+              uses: aws-actions/amazon-ecr-login@v2
 
             - name: Pull image
               env:
@@ -156,7 +156,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v1
+              uses: aws-actions/amazon-ecr-login@v2
 
             - name: Fill in the new image ID in task definition
               id: task-def
