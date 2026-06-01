@@ -12,7 +12,7 @@ env:
     AWS_REGION: us-east-1
     ECR_REPOSITORY_NAME: prab-cicd-backend
     ECS_SERVICE: service1
-    PROD_ECS_CLUSTER: company-backend-prod-ecs-cluster
+    PROD_ECS_CLUSTER: prab-cicd-backend-prod
     DEV_ECS_CLUSTER: company-backend-dev-ecs-cluster
     STAGE_ECS_CLUSTER: company-backend-stage-ecs-cluster
     ECS_TASK_DEFINITION: .aws/ecs-flaskapi-taskDefinition.json

@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   type        = string
   description = "Name of the project, used for naming resources"
-  default     = "my-project"
+  default     = "prab-cicd"
 }
 
 variable "tags" {

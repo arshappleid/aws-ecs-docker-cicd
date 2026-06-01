@@ -12,7 +12,7 @@ module "vpc" {
   single_nat_gateway = true
   enable_vpn_gateway = true
 
-  tags = merge(tags, {
+  tags = merge(var.tags, {
     Terraform   = "true"
     Environment = "dev"
   })

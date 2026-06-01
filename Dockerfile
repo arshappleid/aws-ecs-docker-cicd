@@ -31,7 +31,7 @@ RUN if [ "${INSTALL_AZURE_CLI}" = "YES" ]; then \
 
 # AWS CLI (conditional)
 RUN if [ "${INSTALL_AWS_CLI}" = "YES" ]; then \
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install && \
     rm -rf awscliv2.zip ./aws; \

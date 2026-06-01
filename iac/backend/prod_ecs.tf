@@ -30,10 +30,10 @@ module "ecs" {
       container_definitions = {
 
         fluent-bit = {
-          cpu       = 512
+          cpu       = 1024
           memory    = 1024
           essential = true
-          image     = "906394416424.dkr.ecr.us-west-2.amazonaws.com/aws-for-fluent-bit:stable"
+          image     = "866934333672.dkr.ecr.us-east-1.amazonaws.com/prab-cicd-backend:latest"
           firelensConfiguration = {
             type = "fluentbit"
           }
@@ -100,7 +100,7 @@ module "ecs" {
       security_group_ingress_rules = {
         alb_3000 = {
           description                  = "Service port"
-          from_port                    = local.container_port
+          from_port                    = 80
           ip_protocol                  = "tcp"
           referenced_security_group_id = "sg-12345678"
         }
