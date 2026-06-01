@@ -5,3 +5,8 @@ variable "tags" {
     project = "prab-cicd-ecs"
   }
 }
+
+variable "project_name" {
+  type = string
+  default = "prab-cicd-ecs"
+}

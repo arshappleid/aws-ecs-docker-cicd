@@ -95,7 +95,7 @@ module "ecs" {
         }
       }
 
-      subnet_ids = ["subnet-abcde012", "subnet-bcde012a", "subnet-fghi345a"]
+      subnet_ids = module.vpc.private_subnets.ids
 
       security_group_ingress_rules = {
         alb_3000 = {
