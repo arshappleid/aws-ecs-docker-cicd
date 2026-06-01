@@ -77,5 +77,5 @@ This example makes use of Bruno API testing (open source), to perform API reques
 [] Separate Cluster for each environment
 [] Finish Front End Pipeline
 [] Add Artifact Caching to optimize performance of the pipeline.
-[] 
+[] fix permission
 
