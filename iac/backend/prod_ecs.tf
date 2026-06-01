@@ -2,7 +2,7 @@
 module "ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
-  cluster_name = "ecs-integrated"
+  cluster_name = "${var.project_name}-prod"
 
   cluster_configuration = {
     execute_command_configuration = {
@@ -12,7 +12,6 @@ module "ecs" {
       }
     }
   }
-
   # Cluster capacity providers
   cluster_capacity_providers = ["FARGATE_SPOT"] ## Helps save on cost
   default_capacity_provider_strategy = {
