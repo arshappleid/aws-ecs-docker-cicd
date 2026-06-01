@@ -68,8 +68,7 @@ module "alb" {
     }
   }
 
-  tags = merge(tags, {
-
+  tags = merge(var.tags, {
     Project     = "Example"
-  }
+  })
 }
