@@ -74,7 +74,7 @@ module "ecs" {
           memoryReservation = 100
         }
       }
-
+      /*
       service_connect_configuration = {
         namespace = "example"
         service = [{
@@ -86,6 +86,7 @@ module "ecs" {
           discovery_name = "ecs-sample"
         }]
       }
+      */
 
       load_balancer = {
         service = {
