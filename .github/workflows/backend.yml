@@ -75,7 +75,7 @@ jobs:
 
         steps:
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
@@ -149,7 +149,7 @@ jobs:
                   ref: ${{ github.sha }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v3
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
@@ -201,7 +201,7 @@ jobs:
               run: npm install -g @usebruno/cli@3
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
