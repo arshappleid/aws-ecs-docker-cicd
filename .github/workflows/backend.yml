@@ -11,7 +11,7 @@ on:
 env:
     AWS_REGION: us-east-1
     ECR_REPOSITORY_NAME: prab-cicd-backend
-    ECS_SERVICE: service1
+    ECS_SERVICE: backend
     PROD_ECS_CLUSTER: prab-cicd-prod
     DEV_ECS_CLUSTER: prab-cicd-dev
     STAGE_ECS_CLUSTER: prab-cicd-stage

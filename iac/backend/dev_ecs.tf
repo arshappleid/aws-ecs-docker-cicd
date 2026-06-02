@@ -1,7 +1,7 @@
-module "ecs" {
+module "dev_ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
-  cluster_name = "${var.project_name}-stage"
+  cluster_name = "${var.project_name}-dev"
   cloudwatch_log_group_class             = var.logs_retention_config.class
   cloudwatch_log_group_retention_in_days = var.logs_retention_config.retention_in_days
 
@@ -9,7 +9,7 @@ module "ecs" {
     execute_command_configuration = {
       logging = "OVERRIDE"
       log_configuration = {
-        cloud_watch_log_group_name = "/aws/stage/${var.tags.Application}-ecs-cluster/logs"
+        cloud_watch_log_group_name = "/aws/${var.tags.Application}-ecs-cluster/logs"
       }
     }
   }
@@ -122,14 +122,13 @@ module "ecs" {
           # Example image used requires access to write to root filesystem
           readonlyRootFilesystem = false
 
-          enable_cloudwatch_logging   = true
-          create_cloudwatch_log_group = false
-          log_configuration = {
-            log_driver = "awslogs"
+          enable_cloudwatch_logging = true
+          logConfiguration = {
+            logDriver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/backend/backend"
+              "awslogs-group"         = "/aws/ecs/dev/${var.tags.Application}-${var.service_1_config.name}"
               "awslogs-region"        = "us-east-1"
-              "awslogs-stream-prefix" = "ecs-backend"
+              "awslogs-stream-prefix" = "ecs-${var.service_1_config.name}"
             }
           }
           memoryReservation = 100
