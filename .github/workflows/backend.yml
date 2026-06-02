@@ -169,12 +169,23 @@ jobs:
                   container-name: ${{ env.CONTAINER_NAME }}
                   image: ${{ env.ECR_REGISTRY }}/${{env.ECR_REPOSITORY_NAME}}:${{env.IMAGE_TAG}}
 
+            - name: Resolve ECS cluster for branch
+              id: resolve-cluster
+              run: |
+                  if [[ "${{ github.ref_name }}" == "prod" ]]; then
+                    echo "cluster=${{ env.PROD_ECS_CLUSTER }}" >> $GITHUB_OUTPUT
+                  elif [[ "${{ github.ref_name }}" == "stage" ]]; then
+                    echo "cluster=${{ env.STAGE_ECS_CLUSTER }}" >> $GITHUB_OUTPUT
+                  else
+                    echo "cluster=${{ env.DEV_ECS_CLUSTER }}" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Deploy Amazon ECS task definition
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: ${{ env.ECS_SERVICE }}-${{ github.ref_name }}
-                  cluster: ${{ env.ECS_CLUSTER }}
+                  cluster: ${{ steps.resolve-cluster.outputs.cluster }}
                   wait-for-service-stability: false
 
     api_test:
