@@ -135,7 +135,7 @@ jobs:
         name: Deploy Backend Service
         runs-on: ubuntu-24.04-arm
         needs: [build, unit_test, static-scan]
-        if: ${{ needs.unit_test.result == 'success' && needs.static-scan.result == 'success' }}
+        if: ${{ needs.unit_test.result == 'success' && needs.static-scan.result == 'success' && github.ref_name == 'dev' }}
         # environment maps to the branch name (dev / stage / prod).
         # Configure required reviewers for the "prod" environment in:
         # GitHub → Settings → Environments → prod → Required reviewers
