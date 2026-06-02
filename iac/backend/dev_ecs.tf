@@ -99,6 +99,7 @@ module "dev_ecs" {
 	*/
     ## Backend Service
     backend = {
+      family                                 = "${var.project_name}-backend-dev"
       cpu                                    = var.service_1_config.service_cpu_allocation
       memory                                 = var.service_1_config.service_memory_allocation
       desired_count                          = var.service_1_config.desired_count
@@ -106,7 +107,7 @@ module "dev_ecs" {
       cloudwatch_log_group_retention_in_days = var.logs_retention_config.retention_in_days
       # Container definition(s)
       container_definitions = {
-        backend = {
+        flask-api = {
           cpu       = var.service_1_config.task_cpu_allocation
           memory    = var.service_1_config.task_memory_allocation
           essential = true
