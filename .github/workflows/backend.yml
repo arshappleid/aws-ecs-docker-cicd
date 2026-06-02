@@ -19,8 +19,8 @@ env:
     GITHUB_ACTION_IAM_ROLE: arn:aws:iam::866934333672:role/GITHUB-ACTIONS-ALL-REPO
     CONTAINER_NAME: flask-api
     REPO_ROOT_FOLDER_NAME: backend
-    UNIT_TEST_PATH: backend/tests/unit
-    API_TESTS_PATH: backend/tests/api
+    UNIT_TEST_PATH: tests/unit
+    API_TESTS_PATH: tests/api
 
 permissions:
     id-token: write
