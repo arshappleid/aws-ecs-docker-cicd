@@ -147,7 +147,7 @@ module "ecs" {
       }
 	  */
 
-      subnet_ids = [module.vpc.private_subnets[1]]
+      subnet_ids = [module.vpc.private_subnets[0]]
 
       #Only allow traffic from ALB to ECS Service
       security_group_ids = [aws_security_group.backend_ecs.id]
