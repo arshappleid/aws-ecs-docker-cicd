@@ -107,7 +107,7 @@ resource "aws_lb_listener_rule" "service_path_routing" {
     if lookup(service_config, "path_pattern", null) != null
   }
 
-  listener_arn = module.alb.listeners["https"].arn
+  listener_arn = module.alb.listeners["http"].arn
   priority     = try(each.value.alb_route_priority, index(keys(var.services), each.key) + 100)
 
   action {

@@ -100,11 +100,21 @@ variable "services" {
     enable_execute_command = optional(bool, false)
   }))
   default = {
-    backend = {
+    backend-dev = {
       container_port    = 80
       health_check_path = "/health"
       task_family       = "backend"
       image             = "866934333672.dkr.ecr.us-east-1.amazonaws.com/prab-cicd-backend:latest"
+      path_pattern      = "/dev/*"
+      alb_route_priority = 100
+    }
+    backend-stage = {
+      container_port    = 80
+      health_check_path = "/health"
+      task_family       = "backend"
+      image             = "866934333672.dkr.ecr.us-east-1.amazonaws.com/prab-cicd-backend:latest"
+      path_pattern      = "/stage/*"
+      alb_route_priority = 110
     }
   }
 
@@ -135,7 +145,7 @@ variable "alb_listeners" {
 variable "alb_default_target_service" {
   description = "The service name to use as the default ALB target group (must be a key in var.services)"
   type        = string
-  default     = "backend"
+  default     = "backend-dev"
 }
 
 # Security Group Configuration

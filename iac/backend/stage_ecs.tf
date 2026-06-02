@@ -135,18 +135,14 @@ module "ecs" {
           memoryReservation = 100
         }
       }
-		/*
-      service_connect_configuration = {
-        namespace = aws_service_discovery_http_namespace.backend.arn
-        service = [{
-          client_alias = {
-            port     = var.service_2_config.container_port
-            dns_name = "${var.service_2_config.name}"
-          }
-          port_name = var.service_2_config.port_name # ✓ Must be at service level
-        }]
+
+      load_balancer = {
+        service = {
+          target_group_arn = module.alb.target_groups["backend-stage-tg"].arn
+          container_name   = var.service_1_config.name
+          container_port   = var.service_1_config.container_port
+        }
       }
-	  */
 
       subnet_ids = [module.vpc.private_subnets[0]]
 
