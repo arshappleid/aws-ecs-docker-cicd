@@ -1,9 +1,9 @@
 module "alb" {
   source = "terraform-aws-modules/alb/aws"
 
-  name    = "my-alb"
-  vpc_id  = "vpc-abcde012"
-  subnets = ["subnet-abcde012", "subnet-bcde012a"]
+  name    = "${var.project_name}-alb"
+  vpc_id  = module.vpc.vpc_id
+  subnets = module.vpc.public_subnets
 
   # Security Group
   security_group_ingress_rules = {
@@ -30,11 +30,21 @@ module "alb" {
       cidr_ipv4   = "10.0.0.0/16"
     }
   }
-
+  /*
   access_logs = {
     bucket = "my-alb-logs"
   }
-
+*/
+  listeners = {
+    http = {
+      port     = 80
+      protocol = "HTTP"
+      forward = {
+        target_group_key = "backend"
+      }
+    }
+  }
+  /*
   listeners = {
     ex-http-https-redirect = {
       port     = 80
@@ -57,18 +67,37 @@ module "alb" {
     }
     */
   }
-
+*/
   target_groups = {
-    ex-instance = {
-      name_prefix = "h1"
-      protocol    = "HTTP"
-      port        = 80
-      target_type = "instance"
-      target_id   = "i-0f6d38a07d50d080f"
+    backend = {
+      name_prefix          = "fe-"
+      protocol             = "HTTP"
+      port                 = 80
+      target_type          = "ip" 
+      deregistration_delay = 30
+
+      health_check = {
+        enabled             = true
+        healthy_threshold   = 2
+        interval            = 30
+        matcher             = "200"
+        path                = "/health"
+        port                = "traffic-port"
+        protocol            = "HTTP"
+        timeout             = 5
+        unhealthy_threshold = 2
+      }
+
+      create_attachment = false
     }
   }
 
+<<<<<<< HEAD
   tags = merge(var.tags, {
     Project     = "Example"
   })
 }
+=======
+  tags = var.tags
+}
+>>>>>>> stage

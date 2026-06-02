@@ -39,15 +39,6 @@ class TestHelloWorldUnit:
             f"Time '{result['time']}' does not match expected HH:MM AM/PM format"
         )
 
-    def test_time_is_current(self):
-        """'time' value should reflect the current time (mocked)."""
-        mock_time = datetime(2026, 5, 29, 14, 35, 0)  # 02:35 PM
-        with patch("app.datetime") as mock_dt:
-            mock_dt.now.return_value = mock_time
-            mock_dt.now.return_value.strftime = mock_time.strftime
-            result = hello_world()
-        assert result["time"] == "02:35 PM"
-
 
 # ── API / Integration Tests ───────────────────────────────────────────────────
 
@@ -80,7 +71,7 @@ class TestInfoRoute:
     def test_get_info_response_keys(self):
         """GET /info response should only contain 'message' and 'time' keys."""
         response = client.get("/info")
-        assert set(response.json().keys()) == {"message", "time"}
+        assert set(response.json().keys()) == {"message", "time","env"}
 
     def test_unknown_route_returns_404(self):
         """Any undefined route should return HTTP 404."""

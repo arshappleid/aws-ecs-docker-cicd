@@ -5,23 +5,22 @@ on:
         branches: ["stage", "prod", "dev"]
         paths:
             - "backend/**"
-            - ".aws/ecs-flaskapi-taskDefinition.json"
-    workflow_run:
-        workflows: ["Build Base Image"]
-        types: [completed]
-        branches: ["dev"]
+            - ".aws/backend-ecs-taskDefinition.json"
+    workflow_dispatch:
+
 env:
     AWS_REGION: us-east-1
-    ECR_REPOSITORY_BASE: company-backend-base
-    ECR_REPOSITORY_NAME: company-backend-service1
+    ECR_REPOSITORY_NAME: prab-cicd-backend
     ECS_SERVICE: service1
-    ECS_CLUSTER: company-backend-ecs-cluster
+    PROD_ECS_CLUSTER: prab-cicd-backend-prod
+    DEV_ECS_CLUSTER: prab-cicd-backend-dev
+    STAGE_ECS_CLUSTER: prab-cicd-backend-stage
     ECS_TASK_DEFINITION: .aws/ecs-flaskapi-taskDefinition.json
-    GITHUB_ACTION_IAM_ROLE: arn:aws:iam::156041414531:role/Github-actions-backend
+    GITHUB_ACTION_IAM_ROLE: arn:aws:iam::866934333672:role/GITHUB-ACTIONS-ALL-REPO
     CONTAINER_NAME: flask-api
     REPO_ROOT_FOLDER_NAME: backend
-    UNIT_TEST_PATH: backend/tests/unit
-    API_TESTS_PATH: backend/tests/api
+    UNIT_TEST_PATH: tests/unit
+    API_TESTS_PATH: tests/api
 
 permissions:
     id-token: write
@@ -32,7 +31,6 @@ jobs:
         name: Build Source Code
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 10
-        if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
         outputs:
             image: ${{ steps.build-image.outputs.image }}
 
@@ -40,13 +38,13 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  ref: ${{ github.sha }}
 
-            - name: Set up Docker Buildx
+            - name: Set up Docker Build
               uses: docker/setup-buildx-action@v3
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v6
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
@@ -61,10 +59,10 @@ jobs:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   IMAGE_TAG: ${{ github.sha }}
               run: |
-                  # Use latest base image from ECR
-                  BASE_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY_BASE:latest"
-                  sed "s|FROM maroon-base:latest|FROM $BASE_IMAGE|" $REPO_ROOT_FOLDER_NAME/Dockerfile | \
-                      docker build --platform linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG -f - .
+                  docker build --platform linux/arm64 \
+                      -t $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG \
+                      -f $REPO_ROOT_FOLDER_NAME/Dockerfile \
+                      $REPO_ROOT_FOLDER_NAME
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
                   echo "image=$ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
@@ -77,36 +75,35 @@ jobs:
 
         steps:
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v1
+              uses: aws-actions/amazon-ecr-login@v2
 
             - name: Pull image
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  IMAGE_TAG: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  IMAGE_TAG: ${{ github.sha }}
               run: docker pull $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
-              
+
             - name: Run Trivy Vulnerability Scanner
               uses: aquasecurity/trivy-action@master
               with:
-                  image-ref: 'my-app:latest'
-                  format: 'table'
-                  # Exit code '1' means fail the GitHub Actions run if issues are found
-                  exit-code: '1'
+                  image-ref: ${{ needs.build.outputs.image }}
+                  format: "table"
+                  exit-code: "1"
                   ignore-unfixed: true
-                  vuln-type: 'os,library'
-                  severity: 'CRITICAL,HIGH'
-            
+                  vuln-type: "os,library"
+                  severity: "CRITICAL,HIGH"
+
             - name: Start container
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  IMAGE_TAG: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  IMAGE_TAG: ${{ github.sha }}
               run: |
                   docker run -d \
                     --name backend-test \
@@ -122,47 +119,51 @@ jobs:
     static-scan:
         name: Static Application Security Testing (SAST)
         runs-on: ubuntu-latest
+        needs: unit_test
+        if: ${{ needs.unit_test.result == 'success' }}
         steps:
-          - name: Checkout Code
-            uses: actions/checkout@v4
-    
-          # Using Semgrep for fast, accurate static analysis
-          - name: Run Semgrep SAST
-            uses: semgrep/semgrep-action@v1
-            with:
-              config: p/security-audit
-              # Fail the build if vulnerabilities are found
-              auditOnFailure: false
-    
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            # Using Semgrep for fast, accurate static analysis
+            - name: Run Semgrep SAST
+              uses: semgrep/semgrep-action@v1
+              with:
+                  config: p/security-audit
+
     deploy:
         name: Deploy Backend Service
         runs-on: ubuntu-24.04-arm
-        needs: [build, unit_test]
-        if: ${{ needs.unit_test.result == 'success' }}
+        needs: [build, unit_test, static-scan]
+        if: ${{ needs.unit_test.result == 'success' && needs.static-scan.result == 'success' }}
+        # environment maps to the branch name (dev / stage / prod).
+        # Configure required reviewers for the "prod" environment in:
+        # GitHub → Settings → Environments → prod → Required reviewers
+        environment: ${{ github.ref_name }}
         timeout-minutes: 10
 
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  ref: ${{ github.sha }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v3
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v1
+              uses: aws-actions/amazon-ecr-login@v2
 
             - name: Fill in the new image ID in task definition
               id: task-def
               uses: aws-actions/amazon-ecs-render-task-definition@v1
               env:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  IMAGE_TAG: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  IMAGE_TAG: ${{ github.sha }}
               with:
                   task-definition: ${{ env.ECS_TASK_DEFINITION }}
                   container-name: ${{ env.CONTAINER_NAME }}
@@ -172,7 +173,7 @@ jobs:
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
-                  service: ${{ env.ECS_SERVICE }}
+                  service: ${{ env.ECS_SERVICE }}-${{ github.ref_name }}
                   cluster: ${{ env.ECS_CLUSTER }}
                   wait-for-service-stability: false
 
@@ -189,7 +190,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  ref: ${{ github.sha }}
 
             - name: Set up Node.js
               uses: actions/setup-node@v6
@@ -200,7 +201,7 @@ jobs:
               run: npm install -g @usebruno/cli@3
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                   role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
                   aws-region: ${{ env.AWS_REGION }}
