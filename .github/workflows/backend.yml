@@ -15,7 +15,7 @@ env:
     PROD_ECS_CLUSTER: prab-cicd-backend-prod
     DEV_ECS_CLUSTER: prab-cicd-backend-dev
     STAGE_ECS_CLUSTER: prab-cicd-backend-stage
-    ECS_TASK_DEFINITION: .aws/ecs-flaskapi-taskDefinition.json
+    ECS_TASK_DEFINITION: .aws/backend-ecs-taskDefinition.json
     GITHUB_ACTION_IAM_ROLE: arn:aws:iam::866934333672:role/GITHUB-ACTIONS-ALL-REPO
     CONTAINER_NAME: flask-api
     REPO_ROOT_FOLDER_NAME: backend
