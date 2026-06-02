@@ -195,8 +195,8 @@ jobs:
         timeout-minutes: 15
 
         steps:
-            - name: Wait 3 minutes for service to stabilize
-              run: sleep 180
+            - name: Wait 2 minutes for service to stabilize
+              run: sleep 120
 
             - name: Checkout
               uses: actions/checkout@v4
