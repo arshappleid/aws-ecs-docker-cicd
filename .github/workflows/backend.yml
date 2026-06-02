@@ -184,7 +184,7 @@ jobs:
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
-                  service: ${{ env.ECS_SERVICE }}-${{ github.ref_name }}
+                  service: ${{ env.ECS_SERVICE }}
                   cluster: ${{ steps.resolve-cluster.outputs.cluster }}
                   wait-for-service-stability: false
 
