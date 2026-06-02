@@ -32,7 +32,7 @@ variable "service_1_config" {
   description = "Config of the backend ECS service"
   type        = map(any)
   default = {
-    name                   = "backend"
+    name                   = "flask-api"
     service_cpu_allocation    = 1024
     service_memory_allocation = 2048
     container_port         = 80
