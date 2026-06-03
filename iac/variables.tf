@@ -16,6 +16,6 @@ variable "tags" {
   default = {
     owner        = "owner"
     project_name = "my-project"
-    Application = "demo-cicd-api"
+    Application  = "CICD-DEMO-API"
   }
 }

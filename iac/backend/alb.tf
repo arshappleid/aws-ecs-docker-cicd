@@ -1,90 +1,123 @@
+# ALB Security Group (managed separately to avoid EIP/NAT dependency)
+resource "aws_security_group" "alb_sg" {
+  name_prefix = "${var.project_name}-alb-sg"
+  description = "Security group for ALB"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP web traffic"
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS web traffic"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound"
+  }
+
+  tags = var.tags
+}
+
 module "alb" {
-  source = "terraform-aws-modules/alb/aws"
+  source  = "terraform-aws-modules/alb/aws"
+  version = "10.5.0"
 
-  name    = "${var.project_name}-alb"
-  vpc_id  = module.vpc.vpc_id
-  subnets = module.vpc.public_subnets
+  name                       = "${var.project_name}-api-alb"
+  vpc_id                     = module.vpc.vpc_id
+  subnets                    = module.vpc.public_subnets
+  enable_deletion_protection = false
 
-  # Security Group
-  security_group_ingress_rules = {
-    all_http = {
-      from_port   = 80
-      to_port     = 80
-      ip_protocol = "tcp"
-      description = "HTTP web traffic"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-    all_https = {
-      from_port   = 443
-      to_port     = 443
-      ip_protocol = "tcp"
-      description = "HTTPS web traffic"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-  }
-  security_group_egress_rules = {
-    all = {
-      ip_protocol = "-1"
-      cidr_ipv4   = "10.0.0.0/16"
-    }
-  }
-  /*
-  access_logs = {
-    bucket = "my-alb-logs"
-  }
-*/
+  # Use the existing security group instead of creating a new one
+  create_security_group = false
+  security_groups       = [aws_security_group.alb_sg.id]
+
+  # Listeners - dynamically generated from variable
   listeners = {
-    http = {
-      port     = 80
-      protocol = "HTTP"
-      forward = {
-        target_group_key = "backend"
-      }
-    }
+    for key, listener in var.alb_listeners : key => merge(
+      {
+        port     = listener.port
+        protocol = listener.protocol
+      },
+      listener.redirect_to_https ? {
+        redirect = {
+          port        = "443"
+          protocol    = "HTTPS"
+          status_code = "HTTP_301"
+        }
+        } : {
+        forward = {
+          target_group_key = var.alb_default_target_service != null ? "${var.alb_default_target_service}-tg" : (length(var.services) > 0 ? "${keys(var.services)[0]}-tg" : null)
+        }
+      },
+      listener.protocol == "HTTPS" ? {
+        certificate_arn = listener.certificate_arn
+        ssl_policy      = listener.ssl_policy
+      } : {}
+    )
   }
-  /*
-  listeners = {
-    ex-http-https-redirect = {
-      port     = 80
-      protocol = "HTTP"
-      redirect = {
-        port        = "443"
-        protocol    = "HTTPS"
-        status_code = "HTTP_301"
-      }
-    }
-    ex-https = {
-      port            = 443
-      protocol        = "HTTPS"
-      certificate_arn = "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012"
 
-      forward = {
-        target_group_key = "ex-instance"
-      }
-    }
-  }
-*/
+  # Target groups dynamically created for each service
   target_groups = {
-    backend = {
-      name_prefix          = "fe-"
-      protocol             = "HTTP"
-      port                 = 80
-      target_type          = "ip" 
-      deregistration_delay = 30
+    for service_name, service_config in var.services : "${service_name}-tg" => {
+      name_prefix                       = substr("${service_name}TG", 0, 6)
+      protocol                          = "HTTP"
+      port                              = 80
+      target_type                       = "ip"
+      deregistration_delay              = 30
+      load_balancing_cross_zone_enabled = true
 
       health_check = {
         enabled             = true
-        healthy_threshold   = 2
         interval            = 30
-        matcher             = "200"
-        path                = "/health"
+        path                = service_config.health_check_path
         port                = "traffic-port"
+        healthy_threshold   = 2
+        unhealthy_threshold = 3
+        timeout             = 6
         protocol            = "HTTP"
-        timeout             = 5
-        unhealthy_threshold = 2
+        matcher             = "200"
       }
 
       create_attachment = false
+    }
+  }
+
+  tags = merge(var.tags, {
+    "deletion_protection.enabled" = "false"
+  })
+}
+
+resource "aws_lb_listener_rule" "service_path_routing" {
+  for_each = {
+    for service_name, service_config in var.services :
+    service_name => service_config
+    if lookup(service_config, "path_pattern", null) != null
+  }
+
+  listener_arn = module.alb.listeners["http"].arn
+  priority     = try(each.value.alb_route_priority, index(keys(var.services), each.key) + 100)
+
+  action {
+    type             = "forward"
+    target_group_arn = module.alb.target_groups["${each.key}-tg"].arn
+  }
+
+  condition {
+    path_pattern {
+      values = [each.value.path_pattern]
     }
   }
 

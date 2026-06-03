@@ -61,3 +61,27 @@ resource "aws_iam_role_policy_attachment" "backend_task_execution_ssm" {
   role       = aws_iam_role.backend_task_execution_role.name
   policy_arn = aws_iam_policy.backend_task_execution_ssm.arn
 }
+
+# Allow the execution role to create CloudWatch log groups (needed for awslogs-create-group)
+data "aws_iam_policy_document" "backend_task_execution_logs" {
+  statement {
+    sid    = "CloudWatchCreateLogGroup"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+    ]
+    resources = ["arn:aws:logs:*:*:log-group:/aws/ecs/*"]
+  }
+}
+
+resource "aws_iam_policy" "backend_task_execution_logs" {
+  name   = "${var.project_name}-backend-task-execution-logs"
+  policy = data.aws_iam_policy_document.backend_task_execution_logs.json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "backend_task_execution_logs" {
+  role       = aws_iam_role.backend_task_execution_role.name
+  policy_arn = aws_iam_policy.backend_task_execution_logs.arn
+}
