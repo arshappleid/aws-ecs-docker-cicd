@@ -5,17 +5,13 @@ on:
         branches: ["stage", "prod", "dev"]
         paths:
             - "backend/**"
-            - ".aws/backend-ecs-taskDefinition.json"
+            - ".aws/backend-*-taskDefinition.json"
     workflow_dispatch:
 
 env:
     AWS_REGION: us-east-1
     ECR_REPOSITORY_NAME: prab-cicd-backend
-    ECS_SERVICE: service1
-    PROD_ECS_CLUSTER: prab-cicd-backend-prod
-    DEV_ECS_CLUSTER: prab-cicd-backend-dev
-    STAGE_ECS_CLUSTER: prab-cicd-backend-stage
-    ECS_TASK_DEFINITION: .aws/ecs-flaskapi-taskDefinition.json
+    ECS_SERVICE: backend
     GITHUB_ACTION_IAM_ROLE: arn:aws:iam::866934333672:role/GITHUB-ACTIONS-ALL-REPO
     CONTAINER_NAME: flask-api
     REPO_ROOT_FOLDER_NAME: backend
@@ -61,9 +57,11 @@ jobs:
               run: |
                   docker build --platform linux/arm64 \
                       -t $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG \
+                      -t $ECR_REGISTRY/$ECR_REPOSITORY_NAME:latest \
                       -f $REPO_ROOT_FOLDER_NAME/Dockerfile \
                       $REPO_ROOT_FOLDER_NAME
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY_NAME:latest
                   echo "image=$ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
     unit_test:
@@ -135,7 +133,7 @@ jobs:
         name: Deploy Backend Service
         runs-on: ubuntu-24.04-arm
         needs: [build, unit_test, static-scan]
-        if: ${{ needs.unit_test.result == 'success' && needs.static-scan.result == 'success' && github.ref_name == 'dev' }}
+        if: ${{ needs.unit_test.result == 'success' && needs.static-scan.result == 'success' }}
         # environment maps to the branch name (dev / stage / prod).
         # Configure required reviewers for the "prod" environment in:
         # GitHub → Settings → Environments → prod → Required reviewers
@@ -165,7 +163,7 @@ jobs:
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   IMAGE_TAG: ${{ github.sha }}
               with:
-                  task-definition: ${{ env.ECS_TASK_DEFINITION }}
+                  task-definition: ${{ vars.ECS_TASK_DEFINITION }}
                   container-name: ${{ env.CONTAINER_NAME }}
                   image: ${{ env.ECR_REGISTRY }}/${{env.ECR_REPOSITORY_NAME}}:${{env.IMAGE_TAG}}
 
@@ -173,8 +171,8 @@ jobs:
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
-                  service: ${{ env.ECS_SERVICE }}-${{ github.ref_name }}
-                  cluster: ${{ env.ECS_CLUSTER }}
+                  service: ${{ env.ECS_SERVICE }}
+                  cluster: ${{ vars.ECS_CLUSTER }}
                   wait-for-service-stability: false
 
     api_test:
@@ -184,8 +182,8 @@ jobs:
         timeout-minutes: 15
 
         steps:
-            - name: Wait 3 minutes for service to stabilize
-              run: sleep 180
+            - name: Wait 2 minutes for service to stabilize
+              run: sleep 120
 
             - name: Checkout
               uses: actions/checkout@v4

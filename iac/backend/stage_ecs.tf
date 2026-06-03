@@ -9,7 +9,7 @@ module "ecs" {
     execute_command_configuration = {
       logging = "OVERRIDE"
       log_configuration = {
-        cloud_watch_log_group_name = "/aws/${var.tags.Application}-ecs-cluster/logs"
+        cloud_watch_log_group_name = "/aws/stage/${var.tags.Application}-ecs-cluster/logs"
       }
     }
   }
@@ -99,6 +99,7 @@ module "ecs" {
 	*/
     ## Backend Service
     backend = {
+      family                                 = "${var.project_name}-backend-stage"
       cpu                                    = var.service_1_config.service_cpu_allocation
       memory                                 = var.service_1_config.service_memory_allocation
       desired_count                          = var.service_1_config.desired_count
@@ -106,7 +107,7 @@ module "ecs" {
       cloudwatch_log_group_retention_in_days = var.logs_retention_config.retention_in_days
       # Container definition(s)
       container_definitions = {
-        backend = {
+        flask-api = {
           cpu       = var.service_1_config.task_cpu_allocation
           memory    = var.service_1_config.task_memory_allocation
           essential = true
@@ -122,32 +123,29 @@ module "ecs" {
           # Example image used requires access to write to root filesystem
           readonlyRootFilesystem = false
 
-          enable_cloudwatch_logging = true
-          logConfiguration = {
-            logDriver = "awslogs"
+          enable_cloudwatch_logging   = true
+          create_cloudwatch_log_group = false
+          log_configuration = {
+            log_driver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/${var.tags.Application}-${var.service_1_config.name}"
+              "awslogs-group"         = "/aws/ecs/backend/backend"
               "awslogs-region"        = "us-east-1"
-              "awslogs-stream-prefix" = "ecs-${var.service_1_config.name}"
+              "awslogs-stream-prefix" = "ecs-backend"
             }
           }
           memoryReservation = 100
         }
       }
-		/*
-      service_connect_configuration = {
-        namespace = aws_service_discovery_http_namespace.backend.arn
-        service = [{
-          client_alias = {
-            port     = var.service_2_config.container_port
-            dns_name = "${var.service_2_config.name}"
-          }
-          port_name = var.service_2_config.port_name # ✓ Must be at service level
-        }]
-      }
-	  */
 
-      subnet_ids = [module.vpc.private_subnets[1]]
+      load_balancer = {
+        service = {
+          target_group_arn = module.alb.target_groups["backend-stage-tg"].arn
+          container_name   = var.service_1_config.name
+          container_port   = var.service_1_config.container_port
+        }
+      }
+
+      subnet_ids = [module.vpc.private_subnets[0]]
 
       #Only allow traffic from ALB to ECS Service
       security_group_ids = [aws_security_group.backend_ecs.id]

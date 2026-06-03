@@ -46,6 +46,8 @@ tfplan
 # Ignore Terraform backend config files that may contain sensitive info
 backend.hcl
 backend.config
+<<<<<<< HEAD
+=======
 
 # Ignore Terraform provider cache
 .terraform.d/
@@ -60,3 +62,4 @@ backend.config
 # Ignore sensitive variable definition files
 secrets.tfvars
 terraform.tfvars
+>>>>>>> stage
