@@ -1,4 +1,4 @@
-module "ecs" {
+module "stage_ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
   cluster_name = "${var.project_name}-stage"
@@ -15,12 +15,14 @@ module "ecs" {
   }
 
   # Cluster capacity providers
-  cluster_capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+  cluster_capacity_providers = ["FARGATE_SPOT"]
   default_capacity_provider_strategy = {
+    /*
     FARGATE = {
       weight = 100 - var.cluster_config.spot_instance_percentage
       base   = 2 ## Since we have 2 services
     }
+    */
     FARGATE_SPOT = {
       weight = var.cluster_config.spot_instance_percentage
     }
@@ -128,7 +130,7 @@ module "ecs" {
           log_configuration = {
             log_driver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/backend/backend"
+              "awslogs-group"         = "/aws/ecs/stage/backend"
               "awslogs-region"        = "us-east-1"
               "awslogs-stream-prefix" = "ecs-backend"
             }
@@ -147,7 +149,7 @@ module "ecs" {
 
       subnet_ids = [module.vpc.private_subnets[0]]
 
-      #Only allow traffic from ALB to ECS Service
+      # Only allow traffic from ALB to ECS Service
       security_group_ids = [aws_security_group.backend_ecs.id]
 
       security_group_egress_rules = {

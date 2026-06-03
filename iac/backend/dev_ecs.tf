@@ -1,3 +1,6 @@
+locals {
+  environment = "dev"
+}
 module "dev_ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
@@ -15,12 +18,14 @@ module "dev_ecs" {
   }
 
   # Cluster capacity providers
-  cluster_capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+  cluster_capacity_providers = ["FARGATE_SPOT"]
   default_capacity_provider_strategy = {
+    /*
     FARGATE = {
       weight = 100 - var.cluster_config.spot_instance_percentage
       base   = 2 ## Since we have 2 services
     }
+    */
     FARGATE_SPOT = {
       weight = var.cluster_config.spot_instance_percentage
     }
@@ -128,7 +133,7 @@ module "dev_ecs" {
           log_configuration = {
             log_driver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/backend/backend"
+              "awslogs-group"         = "/aws/ecs/dev/backend"
               "awslogs-region"        = "us-east-1"
               "awslogs-stream-prefix" = "ecs-backend-dev"
             }
