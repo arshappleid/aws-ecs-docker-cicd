@@ -1,11 +1,3 @@
-variable "tags" {
-  type = map(string)
-  default = {
-    owner   = "Prabhmeet"
-    project = "prab-cicd-ecs"
-  }
-}
-
 variable "project_name" {
   type = string
   default = "prab-cicd-ecs"
@@ -17,6 +9,7 @@ variable "tags" {
   default = {
     Owner       = "Prabhmeet"
     Terraform   = "true"
+    project = "prab-cicd-ecs"
     Environment = "dev"
     Application = "CICD-DEMO-API"
   }
@@ -26,7 +19,7 @@ variable "logs_retention_config" {
   type        = map(any)
   default = {
     retention_in_days = 365
-    class             = "STANDARD_IA"
+    class             = "INFREQUENT_ACCESS"
   }
 }
 

@@ -7,10 +7,16 @@ output "alb_dns_name" {
   description = "ALB DNS name from the backend module"
   value       = module.backend.alb_dns_name
 }
-
-output "ecs_cluster_name" {
+/*
+output "prod_ecs_cluster_name" {
   description = "ECS cluster name from the backend module"
-  value       = module.backend.ecs_cluster_name
+  value       = module.backend.prod_ecs_cluster_name
+}
+*/
+
+output "stage_ecs_cluster_name" {
+  description = "ECS cluster name from the backend module"
+  value       = module.backend.stage_ecs_cluster_name
 }
 
 output "backend_task_role_arn" {

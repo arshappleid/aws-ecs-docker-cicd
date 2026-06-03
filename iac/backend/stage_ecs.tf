@@ -1,4 +1,4 @@
-module "ecs" {
+module "stage_ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
   cluster_name = "${var.project_name}-stage"
@@ -126,7 +126,7 @@ module "ecs" {
           logConfiguration = {
             logDriver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/${var.tags.Application}-${var.service_1_config.name}"
+              "awslogs-group"         = "/aws/ecs/stage/${var.tags.Application}-${var.service_1_config.name}"
               "awslogs-region"        = "us-east-1"
               "awslogs-stream-prefix" = "ecs-${var.service_1_config.name}"
             }
@@ -151,6 +151,13 @@ module "ecs" {
 
       #Only allow traffic from ALB to ECS Service
       security_group_ids = [aws_security_group.backend_ecs.id]
+      load_balancer = {
+        service = {
+          target_group_arn = module.alb.target_groups[var.service_1_config.name].arn
+          container_name   = var.service_1_config.name
+          container_port   = var.service_1_config.container_port
+        }
+      }
 
       security_group_egress_rules = {
         all = {

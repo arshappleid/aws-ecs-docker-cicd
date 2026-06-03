@@ -3,10 +3,16 @@ output "alb_dns_name" {
   value       = module.alb.dns_name
 }
 
-output "ecs_cluster_name" {
+output "stage_ecs_cluster_name" {
   description = "ECS cluster name"
-  value       = module.ecs.cluster_name
+  value       = module.stage_ecs.cluster_name
 }
+/*
+output "prod_ecs_cluster_name" {
+  description = "ECS cluster name"
+  value       = module.prod_ecs.cluster_name
+}
+*/
 
 output "vpc_id" {
   description = "VPC ID"

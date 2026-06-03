@@ -19,6 +19,7 @@ services:
         build:
             context: ./backend
             dockerfile: Dockerfile
+        platform: linux/amd64
         container_name: backend
         ports:
             - "8000:80"
@@ -27,6 +28,7 @@ services:
         build:
             context: ./frontend
             dockerfile: Dockerfile
+        platform: linux/amd64
         container_name: react_frontend
         ports:
             - "80:80"
