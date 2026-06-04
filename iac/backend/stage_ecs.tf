@@ -124,6 +124,13 @@ module "stage_ecs" {
             }
           ]
 
+          environment = [
+            {
+              name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
+              value = var.service_1_config.otel_endpoint
+            }
+          ]
+
           # Example image used requires access to write to root filesystem
           readonlyRootFilesystem = false
 

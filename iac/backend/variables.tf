@@ -44,6 +44,7 @@ variable "service_1_config" {
     container_name         = "flask-api"
     family_dev             = "prab-cicd-backend-dev"
     family_stage           = "prabh-cicd-ecs-backend-stage"
+    otel_endpoint          = "http://localhost:4317"
     service_cpu_allocation    = 1024
     service_memory_allocation = 2048
     container_port         = 80
