@@ -40,7 +40,10 @@ variable "service_1_config" {
   description = "Config of the backend ECS service"
   type        = map(any)
   default = {
-    name                   = "flask-api"
+    name                   = "backend"
+    container_name         = "flask-api"
+    family_dev             = "prab-cicd-backend-dev"
+    family_stage           = "prabh-cicd-ecs-backend-stage"
     service_cpu_allocation    = 1024
     service_memory_allocation = 2048
     container_port         = 80
@@ -52,14 +55,6 @@ variable "service_1_config" {
   }
 }
 
-# Cluster Configuration
-variable "cluster_config" {
-  description = "Configuration for the Fargate ECS cluster"
-  type = object({
-    spot_instance_percentage = optional(number, 50)
-  })
-  default = {}
-}
 
 # Services Configuration
 variable "services" {

@@ -99,7 +99,11 @@ module "stage_ecs" {
 	*/
     ## Backend Service
     backend = {
-      family                                 = "${var.project_name}-backend-stage"
+      family                                 = var.service_1_config.family_stage
+      runtime_platform = {
+        operating_system_family = "LINUX"
+        cpu_architecture        = "X86_64"
+      }
       cpu                                    = var.service_1_config.service_cpu_allocation
       memory                                 = var.service_1_config.service_memory_allocation
       desired_count                          = var.service_1_config.desired_count
@@ -140,7 +144,7 @@ module "stage_ecs" {
       load_balancer = {
         service = {
           target_group_arn = module.alb.target_groups["backend-stage-tg"].arn
-          container_name   = var.service_1_config.name
+          container_name   = var.service_1_config.container_name
           container_port   = var.service_1_config.container_port
         }
       }
@@ -149,13 +153,6 @@ module "stage_ecs" {
 
       #Only allow traffic from ALB to ECS Service
       security_group_ids = [aws_security_group.backend_ecs.id]
-      load_balancer = {
-        service = {
-          target_group_arn = module.alb.target_groups[var.service_1_config.name].arn
-          container_name   = var.service_1_config.name
-          container_port   = var.service_1_config.container_port
-        }
-      }
 
       security_group_egress_rules = {
         all = {
