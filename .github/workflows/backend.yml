@@ -17,6 +17,7 @@ env:
     REPO_ROOT_FOLDER_NAME: backend
     UNIT_TEST_PATH: tests/unit
     API_TESTS_PATH: tests/api
+    API_BASE_URL: http://prab-cicd-api-alb-1337318245.us-east-1.elb.amazonaws.com
 
 permissions:
     id-token: write
@@ -180,7 +181,7 @@ jobs:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: ${{ env.ECS_SERVICE }}
                   cluster: ${{ vars.ECS_CLUSTER }}
-                  wait-for-service-stability: false
+                  wait-for-service-stability: true
 
     api_test:
         name: API Testing
@@ -189,9 +190,6 @@ jobs:
         timeout-minutes: 15
 
         steps:
-            - name: Wait 2 minutes for service to stabilize
-              run: sleep 120
-
             - name: Checkout
               uses: actions/checkout@v4
               with:
@@ -204,34 +202,13 @@ jobs:
 
             - name: Install Bruno CLI
               run: npm install -g @usebruno/cli@3
-
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v4
-              with:
-                  role-to-assume: ${{ env.GITHUB_ACTION_IAM_ROLE }}
-                  aws-region: ${{ env.AWS_REGION }}
-
-            - name: Get Cognito access token
-              id: cognito
-              env:
-                  COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
-                  COGNITO_REFRESH_TOKEN: ${{ secrets.COGNITO_REFRESH_TOKEN }}
-              run: |
-                  RESPONSE=$(aws cognito-idp initiate-auth \
-                      --region ${{ env.AWS_REGION }} \
-                      --auth-flow REFRESH_TOKEN_AUTH \
-                      --client-id "$COGNITO_CLIENT_ID" \
-                      --auth-parameters REFRESH_TOKEN="$COGNITO_REFRESH_TOKEN" \
-                      --query 'AuthenticationResult.AccessToken' \
-                      --output text)
-                  echo "access_token=$RESPONSE" >> $GITHUB_OUTPUT
-
+           
             - name: Run Bruno demo collection
               working-directory: ${{ env.API_TESTS_PATH }}
               run: |
                   bru run \
                     --env prod \
-                    --env-var api_access_token="${{ steps.cognito.outputs.access_token }}" \
+                    --env-var baseUrl="${{ env.API_BASE_URL }}" \
                     --env-var platform_name="GitHub Actions" \
                     --env-var build_id="${{ github.run_id }}" \
                     --env-var commit_sha="${{ github.sha }}"
