@@ -32,7 +32,10 @@ data "aws_iam_policy_document" "backend_task_ssm" {
       "ssm:GetParameters",
       "ssm:GetParametersByPath",
     ]
-    resources = ["arn:aws:ssm:*:*:parameter/${var.project_name}/*"]
+    resources = [
+      "arn:aws:ssm:*:*:parameter/${var.project_name}/*",
+      "arn:aws:ssm:us-east-1:*:parameter/prab/aws-ecs-cicd/*"
+      ]
   }
 }
 
