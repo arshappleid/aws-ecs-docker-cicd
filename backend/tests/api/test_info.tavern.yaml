@@ -1,0 +1,13 @@
+test_name: Info endpoint
+
+stages:
+  - name: GET /info returns 200 with server info
+    request:
+      url: "{tavern.env_vars.BASE_URL}/info"
+      method: GET
+    response:
+      status_code: 200
+      json:
+        message: "Prabhmeets Server"
+        env: !anystr
+        time: !anystr

@@ -16,7 +16,7 @@ env:
     CONTAINER_NAME: flask-api
     REPO_ROOT_FOLDER_NAME: backend
     UNIT_TEST_PATH: tests/unit
-    API_TESTS_PATH: tests/api
+    API_TESTS_PATH: backend/tests/api
     API_BASE_URL: http://prab-cicd-api-alb-1337318245.us-east-1.elb.amazonaws.com
 
 permissions:
