@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/info")
 def hello_world():
     current_time = datetime.now().strftime("%I:%M %p")
-    env = os.getenv("ENV", "development")
+    env = os.getenv("ENVIRONMENT", "Missing ENVIRONMENT variable")
     return {"message": "Prabhmeets Server", "time": current_time, "env": env}
 
 

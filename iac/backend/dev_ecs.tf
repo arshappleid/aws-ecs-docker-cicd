@@ -64,7 +64,7 @@ module "dev_ecs" {
           memoryReservation = 100
         }
       }
-
+      
       service_connect_configuration = {
         namespace = aws_service_discovery_http_namespace.frontend.arn
         service = [{
