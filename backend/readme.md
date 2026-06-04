@@ -5,3 +5,4 @@ try again
 path fix
 realm fix
 fix splunk endpoint
+try inssecure
