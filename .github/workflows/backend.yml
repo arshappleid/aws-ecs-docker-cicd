@@ -176,7 +176,7 @@ jobs:
                 echo "=========================================="
 
             - name: Deploy Amazon ECS task definition
-              id: deploy
+              id: deploy-task-def
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
@@ -186,7 +186,7 @@ jobs:
 
             - name: Print deployed task definition
               run: |
-                  TASK_DEF_ARN="${{ steps.deploy.outputs.task-definition-arn }}"
+                  TASK_DEF_ARN="${{ steps.deploy-task-def.outputs.task-definition-arn }}"
                   FAMILY=$(echo "$TASK_DEF_ARN" | cut -d'/' -f2 | cut -d':' -f1)
                   REVISION=$(echo "$TASK_DEF_ARN" | cut -d':' -f7)
                   echo "=========================================="
