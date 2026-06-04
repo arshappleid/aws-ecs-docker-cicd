@@ -173,6 +173,7 @@ jobs:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: ${{ env.ECS_SERVICE }}
                   cluster: ${{ vars.ECS_CLUSTER }}
+                  container-name: ${{ env.CONTAINER_NAME }}w
                   wait-for-service-stability: false
 
     api_test:
