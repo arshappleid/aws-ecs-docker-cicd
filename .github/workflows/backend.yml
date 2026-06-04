@@ -166,6 +166,13 @@ jobs:
                   task-definition: ${{ vars.ECS_TASK_DEFINITION }}
                   container-name: ${{ env.CONTAINER_NAME }}
                   image: ${{ env.ECR_REGISTRY }}/${{env.ECR_REPOSITORY_NAME}}:${{env.IMAGE_TAG}}
+            
+            # ADD THIS VERIFICATION STEP HERE:
+            - name: Verify Rendered Task Definition
+              run: |
+                echo "=== Printing Generated Task Definition ==="
+                cat ${{ steps.task-def.outputs.task-definition }}
+                echo "=========================================="
 
             - name: Deploy Amazon ECS task definition
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -173,7 +180,6 @@ jobs:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: ${{ env.ECS_SERVICE }}
                   cluster: ${{ vars.ECS_CLUSTER }}
-                  container-name: ${{ env.CONTAINER_NAME }}w
                   wait-for-service-stability: false
 
     api_test:
