@@ -9,7 +9,7 @@ module "dev_ecs" {
     execute_command_configuration = {
       logging = "OVERRIDE"
       log_configuration = {
-        cloud_watch_log_group_name = "/aws/${var.tags.Application}-ecs-cluster/logs"
+        cloud_watch_log_group_name = "/aws/dev/${var.tags.Application}-ecs-cluster/logs"
       }
     }
   }
@@ -64,7 +64,7 @@ module "dev_ecs" {
           memoryReservation = 100
         }
       }
-      
+
       service_connect_configuration = {
         namespace = aws_service_discovery_http_namespace.frontend.arn
         service = [{
@@ -132,9 +132,9 @@ module "dev_ecs" {
           log_configuration = {
             log_driver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/backend/backend"
+              "awslogs-group"         = "/aws/ecs/dev/${var.tags.Application}-${var.service_1_config.name}"
               "awslogs-region"        = "us-east-1"
-              "awslogs-stream-prefix" = "ecs-backend-dev"
+              "awslogs-stream-prefix" = "ecs-backend"
             }
           }
           memoryReservation = 100
