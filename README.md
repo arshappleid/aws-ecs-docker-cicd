@@ -64,6 +64,8 @@ prod - requires admin approval
 ## CICD Pipeline Features
 ![alt text](./assets/images/cicd-pipeline.png)
 ### Trigger Conditions
+![alt text](./assets/images/manual_approval.png)
+
 The pipeline is triggered on pushes to the `dev`, `stage`, and `prod` branches when changes are made to the `backend/` directory or any of the task definition files under `.aws/`. It can also be triggered manually via `workflow_dispatch`. Each branch maps directly to its corresponding ECS cluster environment.
 
 ### Build
