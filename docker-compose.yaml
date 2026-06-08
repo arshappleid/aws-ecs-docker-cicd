@@ -23,6 +23,8 @@ services:
         container_name: backend
         ports:
             - "8000:80"
+        environment:
+            - ENVIRONMENT=local
 
     frontend:
         build:

@@ -62,6 +62,10 @@ module "stage_ecs" {
             {
               name  = "PATH_PREFIX"
               value = "/stage"
+            },
+            {
+              name  = "ENVIRONMENT"
+              value = "stage"
             }
           ]
 

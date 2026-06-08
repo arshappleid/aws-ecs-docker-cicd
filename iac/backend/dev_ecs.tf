@@ -62,6 +62,10 @@ module "dev_ecs" {
             {
               name  = "PATH_PREFIX"
               value = "/dev"
+            },
+            {
+              name  = "ENVIRONMENT"
+              value = "dev"
             }
           ]
 

@@ -64,6 +64,10 @@ module "prod_ecs" {
             {
               name  = "PATH_PREFIX"
               value = "/prod"
+            },
+            {
+              name  = "ENVIRONMENT"
+              value = "prod"
             }
           ]
 

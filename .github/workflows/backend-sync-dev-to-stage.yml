@@ -1,4 +1,4 @@
-name: Sync dev into stage
+name: Scheduled Sync - Merge dev into stage
 
 on:
     schedule:
