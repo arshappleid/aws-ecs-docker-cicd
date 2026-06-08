@@ -36,8 +36,9 @@ API_BASE_URL: http://prab-cicd-api-alb-1337318245.us-east-1.elb.amazonaws.com
 ```
 
 #### AWS infra creation
-This infrastructure should not be managed by Terraform, since it will rarely require deletion. Or an accidental deletion of the following resources can be problematic. The following are also examples, 
+This infrastructure should not be managed by Terraform, since it will rarely require deletion. Or an accidental deletion of the following resources can be problematic.
 
+The following are also examples :
 
 1. ECR Repositories , use ```scripts/create_ecr_repo.sh```
 2. Github Actions IAM role to authenticate over OIDC, use ```scripts/create_github_actions_iam_role.sh```.
@@ -45,6 +46,8 @@ This infrastructure should not be managed by Terraform, since it will rarely req
 
 ### Environment Description
 ![Environment Setup](assets/images/Environment-Setup.png)
+
+![alt text](./assets/images/alb-config.png)
 
 dev > stage > prod
 
