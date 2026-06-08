@@ -1,0 +1,49 @@
+name: Manual Sync - Merge Stage into Prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual sync/rollback'
+        required: false
+        default: 'Manual sync triggered by operator'
+
+jobs:
+  merge-branches:
+    name: Git Merge Stage to Prod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch and Sync Branches
+        run: |
+          git fetch origin stage
+          git fetch origin prod
+
+      - name: Checkout Prod Branch
+        run: |
+          git checkout prod
+          git pull origin prod
+
+      - name: Merge Stage Into Prod
+        run: |
+          echo "Log: Triggering manual merge of 'stage' branch into 'prod'..."
+          echo "Context: ${{ github.event.inputs.reason }}"
+          
+          # The --no-ff flag ensures a merge commit is created for clear git history tracking
+          git merge origin/stage --no-ff -m "Merge branch 'stage' into prod (Manual Sync Workflow)"
+
+      - name: Push Changes to Remote
+        run: |
+          # Pushing to 'prod' will automatically trip your main deployment webhook
+          git push origin prod

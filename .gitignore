@@ -35,3 +35,31 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore generated Terraform plan files
+*.tfplan
+tfplan
+
+# Ignore Terraform lock file (optional: remove if you want to track provider versions)
+# .terraform.lock.hcl
+
+# Ignore Terraform backend config files that may contain sensitive info
+backend.hcl
+backend.config
+<<<<<<< HEAD
+=======
+
+# Ignore Terraform provider cache
+.terraform.d/
+
+# Ignore Terraform environment files
+.env
+*.env
+
+# Ignore Terraform generated files
+*.terraform.lock.hcl.backup
+
+# Ignore sensitive variable definition files
+secrets.tfvars
+terraform.tfvars
+>>>>>>> stage

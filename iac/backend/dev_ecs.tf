@@ -1,7 +1,7 @@
-module "prod_ecs" {
+module "dev_ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
-  cluster_name                           = "${var.project_name}-prod"
+  cluster_name = "${var.project_name}-dev"
   cloudwatch_log_group_class             = var.logs_retention_config.class
   cloudwatch_log_group_retention_in_days = var.logs_retention_config.retention_in_days
 
@@ -9,7 +9,7 @@ module "prod_ecs" {
     execute_command_configuration = {
       logging = "OVERRIDE"
       log_configuration = {
-        cloud_watch_log_group_name = "/aws/prod/${var.tags.Application}-ecs-cluster/logs"
+        cloud_watch_log_group_name = "/aws/dev/${var.tags.Application}-ecs-cluster/logs"
       }
     }
   }
@@ -25,12 +25,11 @@ module "prod_ecs" {
       weight = var.cluster_config.spot_instance_percentage
     }
   }
-
   ## Services
   services = {
     ## Backend Service
     backend = {
-      family = var.service_1_config.family_prod
+      family                                 = var.service_1_config.family_dev
       runtime_platform = {
         operating_system_family = "LINUX"
         cpu_architecture        = "X86_64"
@@ -40,7 +39,6 @@ module "prod_ecs" {
       desired_count                          = var.service_1_config.desired_count
       cloudwatch_log_group_class             = var.logs_retention_config.class
       cloudwatch_log_group_retention_in_days = var.logs_retention_config.retention_in_days
-
       # Container definition(s)
       container_definitions = {
         flask-api = {
@@ -71,7 +69,7 @@ module "prod_ecs" {
           log_configuration = {
             log_driver = "awslogs"
             options = {
-              "awslogs-group"         = "/aws/ecs/prod/${var.tags.Application}-${var.service_1_config.name}"
+              "awslogs-group"         = "/aws/ecs/dev/${var.tags.Application}-${var.service_1_config.name}"
               "awslogs-region"        = "us-east-1"
               "awslogs-stream-prefix" = "ecs-backend"
             }
@@ -82,7 +80,7 @@ module "prod_ecs" {
 
       load_balancer = {
         service = {
-          target_group_arn = module.alb.target_groups["backend-prod-tg"].arn
+          target_group_arn = module.alb.target_groups["backend-dev-tg"].arn
           container_name   = var.service_1_config.container_name
           container_port   = var.service_1_config.container_port
         }
