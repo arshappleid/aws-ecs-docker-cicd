@@ -62,9 +62,12 @@ request_latency_histogram = meter.create_histogram(
 
 
 # --- FastAPI Application ---
+path_prefix = os.getenv("PATH_PREFIX", "")
+
 app = FastAPI(
-    title="Prabhmeets FastAPI Server", 
-    version="1.0.0"
+    title="Prabhmeets FastAPI Server",
+    version="1.0.0",
+    root_path=path_prefix,
 )
 router = APIRouter()
 
@@ -111,4 +114,4 @@ async def monitor_requests(request: Request, call_next):
         
     return response
 
-app.include_router(router)
+app.include_router(router, prefix=path_prefix)

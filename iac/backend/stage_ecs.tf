@@ -58,6 +58,10 @@ module "stage_ecs" {
             {
               name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
               value = var.service_1_config.otel_endpoint
+            },
+            {
+              name  = "PATH_PREFIX"
+              value = "/stage"
             }
           ]
 
