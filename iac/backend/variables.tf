@@ -43,7 +43,8 @@ variable "service_1_config" {
     name                   = "backend"
     container_name         = "flask-api"
     family_dev             = "prab-cicd-backend-dev"
-    family_stage           = "prabh-cicd-ecs-backend-stage"
+    family_stage           = "prab-cicd-ecs-backend-stage"
+    family_prod            = "prab-cicd-backend-prod"
     otel_endpoint          = "http://localhost:4317"
     service_cpu_allocation    = 1024
     service_memory_allocation = 2048
@@ -119,6 +120,14 @@ variable "services" {
       image             = "866934333672.dkr.ecr.us-east-1.amazonaws.com/prab-cicd-backend:latest"
       path_pattern      = "/stage/*"
       alb_route_priority = 110
+    }
+    backend-prod = {
+      container_port     = 80
+      health_check_path  = "/health"
+      task_family        = "backend"
+      image              = "866934333672.dkr.ecr.us-east-1.amazonaws.com/prab-cicd-backend:latest"
+      path_pattern       = "/prod/*"
+      alb_route_priority = 120
     }
   }
 
