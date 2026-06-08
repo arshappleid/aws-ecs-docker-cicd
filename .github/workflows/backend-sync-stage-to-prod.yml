@@ -1,4 +1,4 @@
-name: Manual Sync - Merge Stage into Dev
+name: Manual Sync - Merge Stage into Prod
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   merge-branches:
-    name: Git Merge Stage to Dev
+    name: Git Merge Stage to Prod
     runs-on: ubuntu-latest
 
     steps:
@@ -28,22 +28,22 @@ jobs:
       - name: Fetch and Sync Branches
         run: |
           git fetch origin stage
-          git fetch origin dev
+          git fetch origin prod
 
-      - name: Checkout Dev Branch
+      - name: Checkout Prod Branch
         run: |
-          git checkout dev
-          git pull origin dev
+          git checkout prod
+          git pull origin prod
 
-      - name: Merge Stage Into Dev
+      - name: Merge Stage Into Prod
         run: |
-          echo "Log: Triggering manual merge of 'stage' branch into 'dev'..."
+          echo "Log: Triggering manual merge of 'stage' branch into 'prod'..."
           echo "Context: ${{ github.event.inputs.reason }}"
           
           # The --no-ff flag ensures a merge commit is created for clear git history tracking
-          git merge origin/stage --no-ff -m "Merge branch 'stage' into dev (Manual Sync Workflow)"
+          git merge origin/stage --no-ff -m "Merge branch 'stage' into prod (Manual Sync Workflow)"
 
       - name: Push Changes to Remote
         run: |
-          # Pushing to 'dev' will automatically trip your main deployment webhook
-          git push origin dev
+          # Pushing to 'prod' will automatically trip your main deployment webhook
+          git push origin prod
