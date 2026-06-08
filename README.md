@@ -82,6 +82,9 @@ After unit tests pass, [Semgrep](https://semgrep.dev/) performs static analysis 
 
 The deploy job is tied to a GitHub Environment that matches the branch name (`dev`, `stage`, or `prod`). GitHub Environments support required reviewers — configuring reviewers on the `prod` environment enforces a manual approval step before any production deployment proceeds. No code changes are required to enable or modify this gate; it is controlled entirely through repository settings.
 
+#### Merging/Pushing to Prod
+To merge changes to prod, Create a pull request from stage -> prod and then manually review the changes and which will trigger the main deployment pipeline and 
+
 ### Deployment
 On approval, the pipeline renders the environment-specific ECS task definition JSON (referenced via the `ECS_TASK_DEFINITION` repository variable) with the new commit-SHA-tagged image. The rendered task definition is registered with ECS and deployed to the target cluster and service using `amazon-ecs-deploy-task-definition`, which waits for service stability before marking the job as successful. The deployed task definition family, revision, and full ARN are printed to the job log for auditability.
 
