@@ -121,5 +121,19 @@ resource "aws_lb_listener_rule" "service_path_routing" {
     }
   }
 
+  dynamic "transform" {
+    for_each = each.value.strip_path_prefix ? [1] : []
+    content {
+      type = "url-rewrite"
+      url_rewrite_config {
+        rewrite {
+          # If path_pattern is "/dev/*", this creates regex "^/dev/(.*)$"
+          regex   = "^${replace(each.value.path_pattern, "/*", "")}/(.*)$"
+          replace = "/$1"
+        }
+      }
+    }
+  }
+
   tags = var.tags
 }
