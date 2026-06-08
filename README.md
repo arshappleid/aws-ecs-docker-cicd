@@ -8,10 +8,6 @@ CICD Ideology, the repo acts as the source of Truth. Each branch should reflect 
 ## AWS Environment Overview
 ![AWS Architecture](assets/images/aws-architecture.png)
 
-## Explanation of Each Step
-
-![CI/CD Pipeline](assets/images/cicd-pipeline.png)
-
 ## Configuration
 Configure the Environment Variables in the pipeline. 
 
@@ -46,7 +42,7 @@ The following are also examples :
 
 ### Environment Description
 ![Environment Setup](assets/images/Environment-Setup.png)
-
+#### URL Based routing to different environments through the ALB
 ![alt text](./assets/images/alb-config.png)
 
 dev > stage > prod
@@ -62,10 +58,11 @@ prod - requires admin approval
 4. Scroll down to Secret scanning and click Enable.
 
 ## CICD Pipeline Features
-![alt text](./assets/images/cicd-pipeline.png)
-### Trigger Conditions
-![alt text](./assets/images/manual_approval.png)
 
+#### Overview of pipeline
+![alt text](./assets/images/cicd-pipeline.png)
+
+#### Trigger Conditions
 The pipeline is triggered on pushes to the `dev`, `stage`, and `prod` branches when changes are made to the `backend/` directory or any of the task definition files under `.aws/`. It can also be triggered manually via `workflow_dispatch`. Each branch maps directly to its corresponding ECS cluster environment.
 
 ### Build
@@ -81,6 +78,8 @@ The same ECR image that was built and scanned is pulled and run as a container. 
 After unit tests pass, [Semgrep](https://semgrep.dev/) performs static analysis on the source code using the `p/security-audit` ruleset. This catches common vulnerability patterns (injection flaws, insecure defaults, etc.) at the code level, before the code is ever deployed.
 
 ### Manual Approval (Production Gate)
+![alt text](./assets/images/manual_approval.png)
+
 The deploy job is tied to a GitHub Environment that matches the branch name (`dev`, `stage`, or `prod`). GitHub Environments support required reviewers — configuring reviewers on the `prod` environment enforces a manual approval step before any production deployment proceeds. No code changes are required to enable or modify this gate; it is controlled entirely through repository settings.
 
 ### Deployment
