@@ -11,7 +11,7 @@ CICD Ideology, the repo acts as the source of Truth. Each branch should reflect 
 ## Configuration
 Configure the Environment Variables in the pipeline. 
 
-#### Configure the Following Secrets in Github Repo > Settings > Secrets.
+#### Per Branch Environment Variables
 ```
 COGNITO_CLIENT_ID=
 COGNITO_REFRESH_TOKEN=
