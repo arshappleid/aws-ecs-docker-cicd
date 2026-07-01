@@ -1,4 +1,4 @@
-# Base image with shared models
+
 FROM --platform=linux/amd64 python:3.13-slim
 
 WORKDIR /app
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install shared dependencies
+
 COPY requirements.txt requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 

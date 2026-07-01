@@ -124,7 +124,7 @@ jobs:
             - name: Checkout Code
               uses: actions/checkout@v4
 
-            # Using Semgrep for fast, accurate static analysis
+            
             - name: Run Semgrep SAST
               uses: semgrep/semgrep-action@v1
               with:
@@ -135,9 +135,9 @@ jobs:
         runs-on: ubuntu-24.04
         needs: [build, unit_test, static-scan]
         if: ${{ needs.unit_test.result == 'success' && needs.static-scan.result == 'success' }}
-        # environment maps to the branch name (dev / stage / prod).
-        # Configure required reviewers for the "prod" environment in:
-        # GitHub → Settings → Environments → prod → Required reviewers
+        
+        
+        
         environment: ${{ github.ref_name }}
         timeout-minutes: 10
 
@@ -168,7 +168,7 @@ jobs:
                   container-name: ${{ env.CONTAINER_NAME }}
                   image: ${{ env.ECR_REGISTRY }}/${{env.ECR_REPOSITORY_NAME}}:${{env.IMAGE_TAG}}
             
-            # ADD THIS VERIFICATION STEP HERE:
+            
             - name: Verify Rendered Task Definition
               run: |
                 echo "=== Printing Generated Task Definition ==="

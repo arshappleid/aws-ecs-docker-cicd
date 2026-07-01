@@ -1,6 +1,6 @@
-# ---------------------------------------------------------------------------
-# ECS Task Role – assumed by the running container
-# ---------------------------------------------------------------------------
+
+
+
 
 data "aws_iam_policy_document" "backend_task_assume_role" {
   statement {
@@ -21,7 +21,7 @@ resource "aws_iam_role" "backend_task_role" {
   tags = var.tags
 }
 
-# --- SSM Parameter Store ---------------------------------------------------
+
 
 data "aws_iam_policy_document" "backend_task_ssm" {
   statement {
@@ -51,7 +51,7 @@ resource "aws_iam_role_policy_attachment" "backend_task_ssm" {
   policy_arn = aws_iam_policy.backend_task_ssm.arn
 }
 
-# --- CloudWatch Logs -------------------------------------------------------
+
 
 data "aws_iam_policy_document" "backend_task_cloudwatch" {
   statement {
@@ -80,7 +80,7 @@ resource "aws_iam_role_policy_attachment" "backend_task_cloudwatch" {
   policy_arn = aws_iam_policy.backend_task_cloudwatch.arn
 }
 
-# --- S3 --------------------------------------------------------------------
+
 
 data "aws_iam_policy_document" "backend_task_s3" {
   statement {

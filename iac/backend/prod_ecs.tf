@@ -14,21 +14,21 @@ module "prod_ecs" {
     }
   }
 
-  # Cluster capacity providers
+  
   cluster_capacity_providers = ["FARGATE", "FARGATE_SPOT"]
   default_capacity_provider_strategy = {
     FARGATE = {
       weight = 100 - var.cluster_config.spot_instance_percentage
-      base   = 2 ## Since we have 2 services
+      base   = 2 
     }
     FARGATE_SPOT = {
       weight = var.cluster_config.spot_instance_percentage
     }
   }
 
-  ## Services
+  
   services = {
-    ## Backend Service
+    
     backend = {
       family = var.service_1_config.family_prod
       runtime_platform = {
@@ -41,7 +41,7 @@ module "prod_ecs" {
       cloudwatch_log_group_class             = var.logs_retention_config.class
       cloudwatch_log_group_retention_in_days = var.logs_retention_config.retention_in_days
 
-      # Container definition(s)
+      
       container_definitions = {
         flask-api = {
           cpu       = var.service_1_config.task_cpu_allocation
@@ -71,7 +71,7 @@ module "prod_ecs" {
             }
           ]
 
-          # Example image used requires access to write to root filesystem
+          
           readonlyRootFilesystem = false
 
           enable_cloudwatch_logging   = true
@@ -98,7 +98,7 @@ module "prod_ecs" {
 
       subnet_ids = [module.vpc.private_subnets[0]]
 
-      #Only allow traffic from ALB to ECS Service
+      
       security_group_ids = [aws_security_group.backend_ecs.id]
 
       security_group_egress_rules = {

@@ -1,10 +1,10 @@
-#!/bin/bash
+
 set -euo pipefail
 
-# Usage: ./create_ecr_repo.sh <frontend-repo-name> <backend-repo-name>
-#
-# Example:
-#   ./create_ecr_repo.sh my-app-frontend my-app-backend
+
+
+
+
 
 FRONTEND_REPO="${1:-}"
 BACKEND_REPO="${2:-}"
@@ -34,7 +34,7 @@ create_repo() {
   echo "---"
 }
 
-# ── Create repos ──────────────────────────────────────────────────────────────
+
 create_repo "$FRONTEND_REPO" "Frontend"
 create_repo "$BACKEND_REPO"  "Backend"
 

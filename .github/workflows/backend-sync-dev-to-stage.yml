@@ -2,8 +2,8 @@ name: Scheduled Sync - Merge dev into stage
 
 on:
     schedule:
-        - cron: "0 2 * * *" # Runs every day at 02:00 UTC
-    workflow_dispatch: # allow triggering manually from the Actions tab
+        - cron: "0 2 * * *" 
+    workflow_dispatch: 
 
 permissions:
     contents: write

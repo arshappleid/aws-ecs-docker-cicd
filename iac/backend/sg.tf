@@ -1,4 +1,4 @@
-# Backend ECS Service Security Group
+
 resource "aws_security_group" "backend_ecs" {
   name_prefix = "${var.project_name}-ecs-sg"
   description = "Security group for backend ECS service"
@@ -9,7 +9,7 @@ resource "aws_security_group" "backend_ecs" {
   })
 }
 
-# Allow ALB to access Backend
+
 resource "aws_security_group_rule" "backend_from_alb" {
   type                     = "ingress"
   from_port                = var.service_1_config.container_port
@@ -20,7 +20,7 @@ resource "aws_security_group_rule" "backend_from_alb" {
   description              = "Allow ALB to access Backend ECS Service"
 }
 
-# Backend egress
+
 resource "aws_security_group_rule" "backend_egress" {
   type              = "egress"
   from_port         = 0

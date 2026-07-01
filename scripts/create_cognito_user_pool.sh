@@ -1,16 +1,16 @@
-#!/bin/bash
+
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# create_cognito_user_pool.sh
-# Creates a Cognito User Pool with an app client for the project.
-#
-# Usage:
-#   ./scripts/create_cognito_user_pool.sh [POOL_NAME] [APP_CLIENT_NAME] [AWS_REGION]
-#
-# Example:
-#   ./scripts/create_cognito_user_pool.sh my-project-users my-project-client us-east-1
-# ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 POOL_NAME="${1:-my-project-users}"
 APP_CLIENT_NAME="${2:-my-project-client}"
@@ -18,7 +18,7 @@ AWS_REGION="${3:-us-east-1}"
 
 echo "Creating Cognito User Pool: ${POOL_NAME} in ${AWS_REGION}..."
 
-# ── User Pool ──────────────────────────────────────────────────────────────
+
 POOL_ID=$(aws cognito-idp create-user-pool \
   --pool-name "${POOL_NAME}" \
   --region "${AWS_REGION}" \
@@ -53,7 +53,7 @@ POOL_ID=$(aws cognito-idp create-user-pool \
 
 echo "User Pool created: ${POOL_ID}"
 
-# ── App Client ─────────────────────────────────────────────────────────────
+
 echo "Creating App Client: ${APP_CLIENT_NAME}..."
 
 CLIENT_ID=$(aws cognito-idp create-user-pool-client \
@@ -79,7 +79,7 @@ CLIENT_ID=$(aws cognito-idp create-user-pool-client \
 
 echo "App Client created: ${CLIENT_ID}"
 
-# ── Summary ────────────────────────────────────────────────────────────────
+
 echo ""
 echo "=============================="
 echo "Cognito User Pool Summary"

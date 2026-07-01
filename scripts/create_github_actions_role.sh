@@ -1,23 +1,23 @@
-#!/bin/bash
+
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# create_github_actions_role.sh
-# Creates an IAM OIDC provider for GitHub Actions and an IAM role that
-# GitHub Actions workflows can assume via OIDC (no long-lived credentials).
-#
-# Usage:
-#   ./scripts/create_github_actions_role.sh <github-org>/<github-repo> [BRANCH] [AWS_REGION]
-#
-# Arguments:
-#   $1  github-org/github-repo  (required)
-#   $2  branch name or '*' for all branches  (optional, default: *)
-#   $3  AWS region               (optional, default: us-east-1)
-#
-# Example:
-#   ./scripts/create_github_actions_role.sh myorg/aws-ecs-docker-cicd main us-east-1
-#   ./scripts/create_github_actions_role.sh myorg/aws-ecs-docker-cicd
-# ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 GITHUB_REPO="${1:-}"
 BRANCH="${2:-*}"
@@ -38,7 +38,7 @@ AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 echo "AWS Account: ${AWS_ACCOUNT_ID} | Region: ${AWS_REGION}"
 echo "GitHub repo: ${GITHUB_REPO} | Branch: ${BRANCH}"
 
-# ── OIDC Provider ──────────────────────────────────────────────────────────
+
 EXISTING_PROVIDER=$(aws iam list-open-id-connect-providers \
   --query "OpenIDConnectProviderList[?ends_with(Arn, 'token.actions.githubusercontent.com')].Arn" \
   --output text 2>/dev/null || echo "")
@@ -57,7 +57,7 @@ else
   echo "OIDC provider created: ${PROVIDER_ARN}"
 fi
 
-# ── Trust policy ───────────────────────────────────────────────────────────
+
 TRUST_POLICY=$(cat <<EOF
 {
   "Version": "2012-10-17",
@@ -82,7 +82,7 @@ TRUST_POLICY=$(cat <<EOF
 EOF
 )
 
-# ── IAM Role ───────────────────────────────────────────────────────────────
+
 EXISTING_ROLE=$(aws iam get-role --role-name "${ROLE_NAME}" \
   --query "Role.Arn" --output text 2>/dev/null || echo "")
 
@@ -104,7 +104,7 @@ else
   echo "Role created: ${ROLE_ARN}"
 fi
 
-# ── Inline policy: ECR + ECS permissions (broadly over-provisioned) ────────
+
 CICD_POLICY=$(cat <<EOF
 {
   "Version": "2012-10-17",

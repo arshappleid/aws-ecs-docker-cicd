@@ -17,7 +17,7 @@ variable "tags" {
   }
 }
 
-# Logs Configuration
+
 variable "logs_retention_config" {
   description = "Configuration for CloudWatch log retention"
   type        = map(any)
@@ -35,7 +35,7 @@ variable "cluster_config" {
   }
 }
 
-# Legacy single-service config (kept for backwards compat with stage_ecs.tf)
+
 variable "service_1_config" {
   description = "Config of the backend ECS service"
   type        = map(any)
@@ -58,7 +58,7 @@ variable "service_1_config" {
 }
 
 
-# Services Configuration
+
 variable "services" {
   description = "Map of ECS services to create with their configurations"
   type = map(object({
@@ -67,19 +67,19 @@ variable "services" {
     desired_task_count = optional(number, 2)
     port_name          = optional(string, "http")
 
-    # ALB Path-based Routing
+    
     path_pattern       = optional(string)
     alb_route_priority = optional(number)
     strip_path_prefix  = optional(bool, true)
 
-    # Task Definition Configuration
+    
     task_family    = string
     container_name = optional(string, "api")
     image          = optional(string, "public.ecr.aws/docker/library/nginx:alpine")
     task_cpu       = optional(number, 256)
     task_memory    = optional(number, 512)
 
-    # Placement Strategy
+    
     placement_strategy = optional(list(object({
       type  = string
       field = string
@@ -94,14 +94,14 @@ variable "services" {
       }
     ])
 
-    # Deployment Configuration
+    
     deployment_minimum_healthy_percent = optional(number, 50)
     deployment_maximum_percent         = optional(number, 200)
 
-    # CI/CD Integration
+    
     ignore_task_definition_changes = optional(bool, true)
 
-    # ECS Exec
+    
     enable_execute_command = optional(bool, false)
   }))
   default = {
@@ -137,7 +137,7 @@ variable "services" {
   }
 }
 
-# ALB Configuration
+
 variable "alb_listeners" {
   description = "Map of ALB listener configurations"
   type = map(object({
@@ -161,7 +161,7 @@ variable "alb_default_target_service" {
   default     = "backend-dev"
 }
 
-# Security Group Configuration
+
 variable "alb_security_group_ingress" {
   description = "Map of ingress rules for ALB security group"
   type = map(object({
@@ -202,7 +202,7 @@ variable "ecs_security_group_ingress" {
 
 
 
-# Scaling Policy Configuration
+
 variable "scale_up_cpu_threshold" {
   description = "CPU percentage threshold to trigger scale up"
   type        = number

@@ -7,12 +7,7 @@ output "stage_ecs_cluster_name" {
   description = "ECS cluster name"
   value       = module.stage_ecs.cluster_name
 }
-/*
-output "prod_ecs_cluster_name" {
-  description = "ECS cluster name"
-  value       = module.prod_ecs.cluster_name
-}
-*/
+
 
 output "vpc_id" {
   description = "VPC ID"

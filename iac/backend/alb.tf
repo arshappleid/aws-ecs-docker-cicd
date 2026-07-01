@@ -1,4 +1,4 @@
-# ALB Security Group (managed separately to avoid EIP/NAT dependency)
+
 resource "aws_security_group" "alb_sg" {
   name_prefix = "${var.project_name}-alb-sg"
   description = "Security group for ALB"
@@ -40,11 +40,11 @@ module "alb" {
   subnets                    = module.vpc.public_subnets
   enable_deletion_protection = false
 
-  # Use the existing security group instead of creating a new one
+  
   create_security_group = false
   security_groups       = [aws_security_group.alb_sg.id]
 
-  # Listeners - dynamically generated from variable
+  
   listeners = {
     for key, listener in var.alb_listeners : key => merge(
       {
@@ -69,7 +69,7 @@ module "alb" {
     )
   }
 
-  # Target groups dynamically created for each service
+  
   target_groups = {
     for service_name, service_config in var.services : "${service_name}-tg" => {
       name_prefix                       = substr("${service_name}TG", 0, 6)
@@ -127,13 +127,5 @@ resource "aws_lb_listener_rule" "service_path_routing" {
       type = "url-rewrite"
       url_rewrite_config {
         rewrite {
-          # If path_pattern is "/dev/*", this creates regex "^/dev/(.*)$"
-          regex   = "^${replace(each.value.path_pattern, "/*", "")}/(.*)$"
-          replace = "/$1"
-        }
-      }
-    }
-  }
-
-  tags = var.tags
-}
+          
+          regex   = "^${replace(each.value.path_pattern, "

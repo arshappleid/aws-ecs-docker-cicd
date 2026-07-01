@@ -35,8 +35,8 @@ services:
         ports:
             - "80:80"
         environment:
-            # Change this to any URL you want the React app to query.
-            # Uses the Docker service name "backend" and its container port 80.
+            
+            
             - API_URL=http://backend:80/info
         depends_on:
             - backend

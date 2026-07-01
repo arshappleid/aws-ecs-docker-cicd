@@ -8,7 +8,7 @@ from app import app, hello_world
 
 client = TestClient(app)
 
-# ── Unit Tests ────────────────────────────────────────────────────────────────
+
 
 class TestHelloWorldUnit:
     def test_returns_dict(self):
@@ -40,7 +40,7 @@ class TestHelloWorldUnit:
         )
 
 
-# ── API / Integration Tests ───────────────────────────────────────────────────
+
 
 class TestInfoRoute:
     def test_get_info_status_code(self):
